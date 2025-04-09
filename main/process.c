@@ -6,6 +6,7 @@
 
 #define NUM_CHANNELS 256
 #define SAMPLES_TO_DISPLAY 10
+#define EXPECTED_FRAME_TIME_US 1000
 
 void apply_filter(IIRFilter *f, float in, float *out) {
     float b0 = 0.99901921f, b1 = -1.99790074f, b2 = 0.99901921f;
@@ -117,8 +118,14 @@ int process_neural_data(const char* input_file, const char* output_file) {
             f_in[i] = (float)raw[i];
 
         // Filter
-        for (int i = 0; i < NUM_CHANNELS; i++)
+        for (int i = 0; i < NUM_CHANNELS; i++){
             apply_filter(&filters[i], f_in[i], &f_out[i]);
+            double duration = (end.tv_sec - start.tv_sec) * 1e6 + (end.tv_nsec - start.tv_nsec) / 1e3;
+            printf("Frame %zu took %.2f us\n", frames, duration);
+            if (duration > EXPECTED_FRAME_TIME_US) {
+                printf("Warning: Frame %zu took %.2f us, exceeding real-time limit!\n", frames, duration);
+            }
+        }
 
         // Convert back to int16_t
         for (int i = 0; i < NUM_CHANNELS; i++) {
