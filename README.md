@@ -48,7 +48,7 @@ Processing complete. Filtered data saved to ../data/filtered_neural_data.dat
 
 2. **C syntax and time library**: I also used C syntax pages (for printing, converstions) online and figured out how to use libraries to make my work easier
 
-3. **AI Usage**: I used AI to speed up my coding process significantly (ended up rewriting a lot lol) - mostly, AI helped me write comments, print statements, add visualization in python. I learned how to make a Makefile properly and had some gitignore issues due to large database being accidentally pushed - used AI for these.
+3. **AI Usage**: I used AI to speed up my coding process significantly (i ended up rewriting a lot lol) - mostly, AI helped me write comments, print statements, add visualization in python. I learned how to make a Makefile properly and had some gitignore issues due to large database being accidentally pushed - used AI for these.
 
 ## What I can do more
 1. Add testing, and add more visualization
