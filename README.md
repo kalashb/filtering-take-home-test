@@ -28,6 +28,7 @@ Processing complete. Filtered data saved to ../data/filtered_neural_data.dat
 1. input file name and output file name: to use different files, run: ./neural_reader input.dat output.dat
 2. display the raw data: ./neural_reader -d
 3. display the filtered data: ./neural_reader -f
+4. might have to make a "data" folder before running as the file path is specified if you run default
 
 ## External Tools Used
 1. **IIR Filter Design**: I didn't know what a two-pole Butterworth IIR filter was - hence used [MathWorks IIR Filter Design Guide](https://www.mathworks.com/help/signal/ug/iir-filter-design.html). I was really considering processing everything in MATLAB as opposed to C because MATLAB has very specific functionality already documented and could be used - but I didn't find it more useful than modeling. C is more useful to apply in real systems and MATLAB would be good if I had to model it. I might still consider writing a short script to make an IIR filter in MATLAB.
