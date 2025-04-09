@@ -30,6 +30,19 @@ Processing complete. Filtered data saved to ../data/filtered_neural_data.dat
 3. display the filtered data: ./neural_reader -f
 4. might have to make a "data" folder before running as the file path is specified if you run default
 
+## Files:
+
+1. Main file main.c - main function handling, a link between makefile, command file, and my actual code
+2. process.c - read and filter
+
+## Visualization Files
+
+1. `filter_response.py`: Shows the filter's frequency response (magnitude, phase, group delay) to understand its behavior across different frequencies.
+
+2. `filter_performance.py`: Analyzes filter effects on neural data with time-domain plots and frequency analysis.
+
+3. `neural_data_comperison.py`: Side-by-side comparison of raw and filtered neural data across multiple channels.
+
 ## External Tools Used
 1. **IIR Filter Design**: I didn't know what a two-pole Butterworth IIR filter was - hence used [MathWorks IIR Filter Design Guide](https://www.mathworks.com/help/signal/ug/iir-filter-design.html). I was really considering processing everything in MATLAB as opposed to C because MATLAB has very specific functionality already documented and could be used - but I didn't find it more useful than modeling. C is more useful to apply in real systems and MATLAB would be good if I had to model it. I might still consider writing a short script to make an IIR filter in MATLAB.
 
