@@ -12,8 +12,8 @@ void apply_filter(IIRFilter *f, float in, float *out) {
     float b0 = 0.99901921f, b1 = -1.99790074f, b2 = 0.99901921f;
     float a1 = -1.99790074f, a2 = 0.99803843f;
 
-    float y = b0 * in + b1 * f->x[1] + b2 * f->x[2]
-                    - a1 * f->y[1] - a2 * f->y[2];
+    // main filter logic ***** imp *****
+    float y = b0 * in + b1 * f->x[1] + b2 * f->x[2] - a1 * f->y[1] - a2 * f->y[2];
 
     // shift x and y
     f->x[2] = f->x[1];
@@ -31,16 +31,16 @@ int read_data(const char* output_filename) {
     size_t bytes_read;
     int i;
 
-    // Open input file in binary read mode
+    // open input file in read binary (rb) mode
     fp_in = fopen("neural_data_256ch_16b.dat", "rb");
     if (fp_in == NULL) {
         perror("Error opening input file");
         return 1;
     }
 
-    // If output filename is provided, open output file
+    // output file (optional) open in write (wb) mode
     if (output_filename != NULL) {
-        fp_out = fopen(output_filename, "w");
+        fp_out = fopen(output_filename, "wb");
         if (fp_out == NULL) {
             perror("Error opening output file");
             fclose(fp_in);
@@ -48,7 +48,7 @@ int read_data(const char* output_filename) {
         }
     }
 
-    // Allocate memory for one sample set (256 channels)
+    // allocate memory for one sample set (256 channels)
     buffer = (int16_t *)malloc(NUM_CHANNELS * sizeof(int16_t));
     if (buffer == NULL) {
         perror("Error allocating memory");
@@ -56,11 +56,6 @@ int read_data(const char* output_filename) {
         if (fp_out) fclose(fp_out);
         return 1;
     }
-
-    // Print/write header
-    const char* header = "Neural Data (256 channels, 16-bit samples)\n";
-    printf("%s", header);
-    if (fp_out) fprintf(fp_out, "%s", header);
 
     // Read and display/write samples
     for (i = 0; i < SAMPLES_TO_DISPLAY; i++) {
@@ -72,14 +67,8 @@ int read_data(const char* output_filename) {
             break;
         }
 
-        // Print/write sample header
-        printf("Sample %d:\n", i + 1);
-        if (fp_out) fprintf(fp_out, "Sample %d:\n", i + 1);
-
-        if (fp_out) fprintf(fp_out, "\n");
     }
 
-    // Clean up
     free(buffer);
     fclose(fp_in);
     if (fp_out) {
@@ -118,31 +107,27 @@ int process_neural_data(const char* input_file, const char* output_file) {
             f_in[i] = (float)raw[i];
 
         // Filter
-        for (int i = 0; i < NUM_CHANNELS; i++){
+        for (int i = 0; i < NUM_CHANNELS; i++) {
             apply_filter(&filters[i], f_in[i], &f_out[i]);
-            double duration = (end.tv_sec - start.tv_sec) * 1e6 + (end.tv_nsec - start.tv_nsec) / 1e3;
-            printf("Frame %zu took %.2f us\n", frames, duration);
-            if (duration > EXPECTED_FRAME_TIME_US) {
-                printf("Warning: Frame %zu took %.2f us, exceeding real-time limit!\n", frames, duration);
-            }
         }
 
-        // Convert back to int16_t
+        // Convert back to int16_t and write 
         for (int i = 0; i < NUM_CHANNELS; i++) {
             if (f_out[i] > 32767.0f) f_out[i] = 32767.0f;
             if (f_out[i] < -32768.0f) f_out[i] = -32768.0f;
             result[i] = (int16_t)f_out[i];
         }
-
         fwrite(result, sizeof(int16_t), NUM_CHANNELS, outfile);
 
         clock_gettime(CLOCK_MONOTONIC, &end);
         double duration = (end.tv_sec - start.tv_sec) * 1e6 +
-                          (end.tv_nsec - start.tv_nsec) / 1e3;
+                         (end.tv_nsec - start.tv_nsec) / 1e3;
         total_time += duration;
         frames++;
     }
 
+    printf("\nFinal timing statistics:\n");
+    printf("Total time: %.2f us\n", total_time);
     printf("Average time per frame: %.2f us\n", total_time / frames);
     printf("Average time per sample: %.4f us\n", total_time / (frames * NUM_CHANNELS));
 
