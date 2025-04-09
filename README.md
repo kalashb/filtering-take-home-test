@@ -84,13 +84,6 @@ Processing complete. Filtered data saved to ../data/filtered_neural_data.dat
    ./neural_reader -f  # Display filtered data
    ```
 
-## Assumptions
-1. given filter data would work very well in my application
-2. data is properly aligned and i didn't need to process it much
-3. data is little endian
-4. timing measuremenets are representative of real world performance
-5. performance would be similar/consistent across different hardware 
-
 ## Filter Implementation
 The filter is a second-order IIR (Infinite Impulse Response) filter with coefficients:
 ```c
@@ -130,11 +123,11 @@ a = [1.0, -1.99790074, 0.99803843]
 - **Total Processing**: ~499ms for full dataset
 
 ## Assumptions and Limitations
-1. **Assumptions**:
-   - 16-bit integer input data
-   - 256 channels
-   - 32kHz sampling rate
-   - Data fits in memory
+1. given filter data would work very well in my application
+2. data is properly aligned and i didn't need to process it much
+3. data is little endian
+4. timing measuremenets are representative of real world performance
+5. performance would be similar/consistent across different hardware 
 
 2. **Limitations**:
    - File I/O for testing (core filter logic is real-time capable)
