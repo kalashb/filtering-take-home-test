@@ -55,6 +55,7 @@ Processing complete. Filtered data saved to ../data/filtered_neural_data.dat
 2. Actually try feeding it real time somehow and try to draw a real time output to a VGA
 3. Make code more modular - right now the "read_data" function and the "process" function are a bit redundant, although that provides some degree of control over what can be shown on the output, it could be turned into 2 functions with called in the other
 4. Figure out what the output is actually supposed to look like honestly I'm confused here - I could try matlab in this case
+5. Multithreading!!!
 
 ## Compilation and Setup
 1. **Requirements**:
@@ -83,15 +84,41 @@ Processing complete. Filtered data saved to ../data/filtered_neural_data.dat
    ./neural_reader -f  # Display filtered data
    ```
 
+## Assumptions
+1. given filter data would work very well in my application
+2. data is properly aligned and i didn't need to process it much
+3. data is little endian
+4. timing measuremenets are representative of real world performance
+5. performance would be similar/consistent across different hardware 
+
 ## Filter Implementation
 The filter is a second-order IIR (Infinite Impulse Response) filter with coefficients:
 ```c
 b = [0.99901921, -1.99790074, 0.99901921]
 a = [1.0, -1.99790074, 0.99803843]
 ```
-- Direct Form II implementation for better numerical stability
-- Processes each channel independently
-- 32kHz sampling rate
+
+### How the Filter Works
+1. **Sample-by-Sample Processing**:
+   - Each sample is processed independently in real-time
+   - No need to wait for future samples
+   - Maintains only 2 previous input and output samples in memory
+
+2. **Filter Equation**:
+   ```
+   y[n] = b0*x[n] + b1*x[n-1] + b2*x[n-2] - a1*y[n-1] - a2*y[n-2]
+   ```
+   where:
+   - x[n] is current input
+   - y[n] is current output
+   - x[n-1], x[n-2] are previous inputs
+   - y[n-1], y[n-2] are previous outputs
+
+3. **Implementation Details**:
+   - Direct Form II implementation for better numerical stability
+   - Processes each channel independently
+   - 32kHz sampling rate
+   - Fixed-point arithmetic for efficiency
 
 ## Performance Profile
 - **Memory Usage**: 
